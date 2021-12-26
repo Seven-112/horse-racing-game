@@ -9,6 +9,9 @@ use solana_program::{
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 pub const UPGRADABLE_METASIZE: usize = 1 + 1 + 1;
+pub const NFT_LIST_SIZE: usize = 32 * 1000;
+pub const MAX_ADMIN_CNT: usize = 10;
+
 pub const BTC_DECIMALS: usize = 9;
 pub const SOL_DECIMALS: usize = 9;
 pub const MIN_PASSION: u8 = 20;
@@ -17,9 +20,27 @@ pub const MIN_STAMINA: u8 = 20;
 #[program]
 pub mod horse_racing {
     use super::*;
-    pub fn initialize(ctx: Context<Initialize>) -> ProgramResult {
+    pub fn initialize(
+        ctx: Context<Initialize>,
+        nft_list_bump: u8,
+        operator_list_bump: u8
+    ) -> ProgramResult {
+
+        let mut operator_list = &mut ctx.accounts.operator_list;
+        operator_list.operator_array[0] = ctx.accounts.admin.key();
+        operator_list.operator_cnt = 1;
         Ok(())
     }
+
+    pub fn add_operator(
+        ctx: Context<AddOperator>
+    ) -> ProgramResult {
+        let mut operator_list = &mut ctx.accounts.operator_list;
+        operator_list.operator_array[operator_list.operator_cnt as usize] = ctx.accounts.operator.key();
+        operator_list.operator_cnt += 1;
+        Ok(())
+    }
+
     pub fn mint_nft(
         ctx: Context<MintNFT>,
         _bump: u8
@@ -85,9 +106,46 @@ pub mod horse_racing {
 }
 
 #[derive(Accounts)]
-pub struct Initialize {
+#[instruction(nft_list_bump: u8, operator_list_bump: u8)]
+pub struct Initialize<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [
+            (*admin.key).as_ref(), 
+            (*program_id).as_ref(), 
+            "nft_list".as_ref()
+        ],
+        bump = nft_list_bump
+    )]
+    pub nft_list_account: AccountInfo<'info>,
+
+    #[account(
+        init,
+        seeds = [
+            (*admin.key).as_ref(),
+            (*program_id).as_ref(), 
+            "admin_list".as_ref()
+        ],
+        bump = operator_list_bump,
+        payer = admin
+    )]
+    pub operator_list: Account<'info, OperatorWhiteList>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct AddOperator<'info> {
+    #[account(mut, signer)]
+    pub admin: AccountInfo<'info>,
+    
+    pub operator: AccountInfo<'info>,
+
+    #[account(mut)]
+    pub operator_list: ProgramAccount<'info, OperatorWhiteList>,
 }
 
 #[derive(Accounts)]
@@ -162,4 +220,11 @@ pub struct UpgradableMetadata {
     pub bump: u8,
     pub passion: u8,
     pub stamina: u8,
+}
+
+#[account]
+#[derive(Default)]
+pub struct OperatorWhiteList {
+    pub operator_array: [Pubkey; 10],
+    pub operator_cnt: u8,
 }
