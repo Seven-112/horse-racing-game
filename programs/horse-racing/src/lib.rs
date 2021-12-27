@@ -7,7 +7,7 @@ use solana_program::{
     program::{invoke},
     msg
 };
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("DBrWpEKgTccMoAQ6umLTSUWsfLR8wYNmvHJSUPGe4XJ8");
 
 pub const UPGRADABLE_METASIZE: usize = 1 + 1 + 1;
 pub const NFT_LIST_SIZE: usize = 2 + 32 * 1000; // 2 bytes for nft count
