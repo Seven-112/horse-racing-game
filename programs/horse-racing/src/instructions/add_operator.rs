@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use create::state::*;
+use crate::state::*;
 
 #[derive(Accounts)]
 pub struct AddOperator<'info> {

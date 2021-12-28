@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
-use create::state::*;
+use anchor_spl::token::{self, TokenAccount};
+use crate::state::*;
+use crate::utils::*;
 
 #[derive(Accounts)]
 #[instruction(metadata_bump : u8)]
@@ -25,7 +27,7 @@ pub struct MintNFT<'info> {
     )]
     pub upgradable_metadata: Account<'info, UpgradableMetadata>,
 
-    #[account(owner = spl_token::id())]
+    #[account(owner = token::Token::id())]
     pub mint: AccountInfo<'info>,
 
     #[account(

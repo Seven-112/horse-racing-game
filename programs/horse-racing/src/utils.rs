@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use solana_program::{
     program_error::ProgramError,
     program::{invoke},
-}
+};
 
 pub fn get_nft_count<'a> (
     nft_list: AccountInfo<'a>
@@ -13,7 +13,7 @@ pub fn get_nft_count<'a> (
 }
 
 // transfer sol
-fn sol_transfer<'a>(
+pub fn sol_transfer<'a>(
     source: AccountInfo<'a>,
     destination: AccountInfo<'a>,
     system_program: AccountInfo<'a>,
@@ -23,8 +23,8 @@ fn sol_transfer<'a>(
     invoke(&ix, &[source, destination, system_program])
 }
 
-fn min(x: u16, y: u16) -> usize {
-    if (x < y) {
+pub fn min(x: u16, y: u16) -> usize {
+    if x < y {
         return x as usize;
     }
     y as usize

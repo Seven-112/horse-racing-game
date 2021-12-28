@@ -1,5 +1,8 @@
 use anchor_lang::prelude::*;
-use create::state::*;
+use anchor_spl::token::{self, TokenAccount};
+
+use crate::state::*;
+use crate::utils::*;
 
 #[derive(Accounts)]
 pub struct UpgradeNFT<'info> {
@@ -25,7 +28,7 @@ pub struct UpgradeNFT<'info> {
     )]
     pub upgradable_metadata: Account<'info, UpgradableMetadata>,
 
-    #[account(owner = spl_token::id())]
+    #[account(owner = token::Token::id())]
     pub mint: AccountInfo<'info>,
 
     #[account(
@@ -106,7 +109,6 @@ pub fn update_nft_list<'info> (
     ex_metadata: &UpgradableMetadata
 ) -> ProgramResult {
 
-    let item_size: usize = 32 + 1 + 1 + 4;
     let start: usize = (2 + nft_id * 32) as usize;
     let mut nft_list_data = nft_list.data.borrow_mut();
 

@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use create::state::*;
+use crate::state::*;
 
 #[derive(Accounts)]
 #[instruction(operator_list_bump: u8, race_bump: u8)]

@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
-use create::state::*;
+
+use crate::state::*;
+use crate::utils::*;
 
 #[derive(Accounts)]
 pub struct StartRace<'info> {
@@ -73,17 +75,8 @@ pub fn process(
         msg!("No current BTC price");
     }
     random_value += ctx.accounts.clock.unix_timestamp as u128;
+    prize_winner((random_value % 20) as u8, ctx.accounts.nft_list.clone())?;
 
-    let nft_count = get_nft_count(ctx.accounts.nft_list.clone())?;
-    for i in 0..nft_count {
-
-    }
-    let winner_idx = (random_value % nft_count as u128) as u64;
-    msg!("winner is {} th horse!", winner_idx);
-
-    // getting Pubkey of winner
-    /*let winner_pk = prize_winner((winner_idx % 20) as u8, ctx.accounts.nft_list.clone())?;
-    ctx.accounts.race_result.winner = winner_pk;*/
     Ok(())
 }
 
@@ -97,8 +90,7 @@ pub fn prize_winner<'info> (
 
     let item_size: usize = 32 + 1 + 1 + 4;
 
-    let mut t_passion: u8 = 0;
-    let mut t_stamina: u8 = 0;
+
 
     let mut score_arr: [Score; 1000] = [Score { nft_id: 0, score: 0 }; 1000];
 
@@ -106,8 +98,8 @@ pub fn prize_winner<'info> (
 
     for i in 0..cnt {
         let start = 2 + item_size * i;
-        t_passion = nft_list_data[start + 32];
-        t_stamina = nft_list_data[start + 33];
+        let t_passion = nft_list_data[start + 32];
+        let t_stamina = nft_list_data[start + 33];
         score_arr[i].score = (t_passion + t_stamina + random_value) as u16;
         score_arr[i].nft_id = i as u16;
     }
@@ -128,7 +120,7 @@ pub fn prize_winner<'info> (
         let p: u32 = (prize[i] * 100.0) as u32;
         let idx = score_arr[i].nft_id as usize;
         let start = 2 + item_size*idx;
-        p.serialize(&mut &mut nft_list_data[start+34..start+38]);
+        p.serialize(&mut &mut nft_list_data[start+34..start+38])?;
     }
 
     Ok(())

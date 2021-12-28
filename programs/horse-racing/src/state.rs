@@ -32,7 +32,7 @@ pub struct RaceResult {
 }
 
 #[derive(Clone, Copy)]
-struct Score {
-    nft_id: u16,
-    score: u16
+pub struct Score {
+    pub nft_id: u16,
+    pub score: u16
 }
