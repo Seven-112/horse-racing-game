@@ -55,11 +55,11 @@ pub fn process(
     upgradable_metadata.passion = 0;
     upgradable_metadata.stamina = 0;
 
-    //let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
-    //let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
+    let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
+    let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
 
-    let sol_price: Option<u128> = Some(10);
-    let btc_price: Option<u128> = Some(20);
+    //let sol_price: Option<u128> = Some(10);
+    //let btc_price: Option<u128> = Some(20);
 
     msg!("after getprice");
     if let Some(sol_price) = sol_price {

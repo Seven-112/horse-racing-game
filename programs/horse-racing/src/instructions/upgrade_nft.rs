@@ -62,11 +62,11 @@ pub fn process(
 
     let upgradable_metadata = &mut ctx.accounts.upgradable_metadata;
 
-    //let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
-    //let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
+    let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
+    let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
     
-    let sol_price: Option<u128> = Some(10);
-    let btc_price: Option<u128> = Some(20);
+    //let sol_price: Option<u128> = Some(10);
+    //let btc_price: Option<u128> = Some(20);
     
     if let Some(sol_price) = sol_price {
         let rand_from_sol = sol_price + ctx.accounts.clock.unix_timestamp as u128;

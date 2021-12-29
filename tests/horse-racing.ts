@@ -237,5 +237,11 @@ describe('horse-racing', () => {
 
     let new_metadata = await program.account.upgradableMetadata.fetch(upgradable_metadata_pda);
     console.log("new_metadata =", new_metadata);
+
+    let race_result = await program.account.raceResult.fetch(race_result_pda);
+    console.log("race_result =", race_result);
+
+    let nft_list = await provider.connection.getAccountInfo(nftListAccountPk);
+    console.log("nft_list.data =", nft_list.data);
   });
 });

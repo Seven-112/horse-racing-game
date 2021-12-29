@@ -54,11 +54,11 @@ pub fn process(
         return Err(ProgramError::InvalidAccountData);
     }
 
-    //let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
-    //let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
+    let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
+    let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
 
-    let sol_price: Option<u128> = Some(10);
-    let btc_price: Option<u128> = Some(20);
+    //let sol_price: Option<u128> = Some(10);
+    //let btc_price: Option<u128> = Some(20);
 
     let mut random_value: u128 = 0;
     if let Some(sol_price) = sol_price {
@@ -76,17 +76,20 @@ pub fn process(
     }
     random_value += ctx.accounts.clock.unix_timestamp as u128;
     
-    prize_winner((random_value % 20) as u8, ctx.accounts.nft_list.clone())?;
+    prize_winner(
+        (random_value % 20) as u8, 
+        ctx.accounts
+    )?;
 
     Ok(())
 }
 
 pub fn prize_winner<'info> (
     random_value: u8,
-    nft_list: AccountInfo<'info>
+    accounts: &mut StartRace<'info>
 ) -> ProgramResult {
 
-    let mut nft_list_data = nft_list.data.borrow_mut();
+    let mut nft_list_data = accounts.nft_list.data.borrow_mut();
     let count: u16 = u16::try_from_slice(&nft_list_data[0..2])?;
 
     let mut score_arr: Vec<Score> = vec![];
@@ -114,12 +117,17 @@ pub fn prize_winner<'info> (
     let prize: [u8; 10] = [70, 20, 3, 1, 1, 1, 1, 1, 1, 1];
     msg!("prize = {:?}", prize);
 
-    for i in 0..min(count, 10) as usize {
+    let winner_count = min(count, 10) as usize;
+    for i in 0..winner_count {
         let p: u32 = prize[i] as u32;
         let idx = score_arr[i].nft_id as usize;
         let start = 2 + NFT_ITEM_SIZE*idx;
         p.serialize(&mut &mut nft_list_data[start+34..start+38])?;
+
+        let nft_key = Pubkey::try_from_slice(&nft_list_data[start..start+32])?;
+        accounts.race_result.winners[i] = nft_key;
     }
+    accounts.race_result.winner_cnt = winner_count as u8;
 
     Ok(())
 }
