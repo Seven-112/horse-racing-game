@@ -1,6 +1,11 @@
 use anchor_lang::prelude::*;
 use crate::state::*;
 
+#[event]
+struct InitializeEvent {
+    pub initializer: Pubkey,
+}
+
 #[derive(Accounts)]
 #[instruction(operator_list_bump: u8, race_bump: u8)]
 pub struct Initialize<'info> {
@@ -52,5 +57,9 @@ pub fn process(
     let race_result = &mut ctx.accounts.race_result;
     race_result.bump = race_bump;
 
+    emit!(InitializeEvent {
+        initializer: ctx.accounts.admin.key()
+    });
+    
     Ok(())
 }

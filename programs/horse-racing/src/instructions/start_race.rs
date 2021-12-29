@@ -4,6 +4,12 @@ use crate::state::*;
 use crate::utils::*;
 use crate::errors::*;
 
+#[event]
+pub struct RaceEvent {
+    pub winners: [Pubkey; 10],
+    pub winner_count: u8
+}
+
 #[derive(Accounts)]
 pub struct StartRace<'info> {
 
@@ -129,6 +135,11 @@ pub fn prize_winner<'info> (
         accounts.race_result.winners[i] = nft_key;
     }
     accounts.race_result.winner_cnt = winner_count as u8;
+
+    emit!(RaceEvent {
+        winners: accounts.race_result.winners,
+        winner_count: accounts.race_result.winner_cnt
+    });
 
     Ok(())
 }

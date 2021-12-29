@@ -3,6 +3,14 @@ use anchor_spl::token::{self, TokenAccount};
 use crate::state::*;
 use crate::utils::*;
 
+#[event]
+pub struct MintEvent {
+    pub owner: Pubkey,
+    pub mint: Pubkey,
+    pub passion: u8,
+    pub stamina: u8
+}   
+
 #[derive(Accounts)]
 #[instruction(metadata_bump : u8)]
 pub struct MintNFT<'info> {
@@ -85,6 +93,13 @@ pub fn process(
         ctx.accounts.nft_list.clone(),
         &upgradable_metadata
     )?;
+
+    emit!(MintEvent{
+        owner: ctx.accounts.owner.key(),
+        mint: ctx.accounts.mint.key(),
+        passion: upgradable_metadata.passion,
+        stamina: upgradable_metadata.stamina
+    });
 
     Ok(())
 }

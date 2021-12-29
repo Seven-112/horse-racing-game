@@ -5,6 +5,16 @@ use crate::state::*;
 use crate::utils::*;
 use crate::errors::*;
 
+#[event]
+pub struct UpgradeEvent {
+    pub owner: Pubkey,
+    pub mint: Pubkey,
+    pub old_passion: u8,
+    pub old_stamina: u8,
+    pub passion: u8,
+    pub stamina: u8,
+}
+
 #[derive(Accounts)]
 pub struct UpgradeNFT<'info> {
     #[account(
@@ -69,6 +79,9 @@ pub fn process(
     //let sol_price: Option<u128> = Some(10);
     //let btc_price: Option<u128> = Some(20);
     
+    let old_passion = upgradable_metadata.passion;
+    let old_stamina = upgradable_metadata.stamina;
+
     if let Some(sol_price) = sol_price {
         let rand_from_sol = sol_price + ctx.accounts.clock.unix_timestamp as u128;
         upgradable_metadata.passion = (rand_from_sol % 10) as u8 + upgradable_metadata.passion;
@@ -100,6 +113,16 @@ pub fn process(
         ctx.accounts.system_program.to_account_info().clone(),
         10000000
     )?;
+
+    emit!(UpgradeEvent {
+        owner: ctx.accounts.owner.key(),
+        mint: ctx.accounts.mint.key(),
+        old_passion,
+        old_stamina,
+        passion: upgradable_metadata.passion,
+        stamina: upgradable_metadata.stamina
+    });
+
     Ok(())
 }
 
