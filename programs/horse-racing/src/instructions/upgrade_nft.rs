@@ -62,11 +62,11 @@ pub fn process(
 
     let upgradable_metadata = &mut ctx.accounts.upgradable_metadata;
 
-    let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
-    let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
+    //let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
+    //let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
     
-    //let sol_price: Option<u128> = Some(10);
-    //let btc_price: Option<u128> = Some(20);
+    let sol_price: Option<u128> = Some(10);
+    let btc_price: Option<u128> = Some(20);
     
     if let Some(sol_price) = sol_price {
         let rand_from_sol = sol_price + ctx.accounts.clock.unix_timestamp as u128;
@@ -109,7 +109,7 @@ pub fn update_nft_list<'info> (
     ex_metadata: &UpgradableMetadata
 ) -> ProgramResult {
 
-    let start: usize = (2 + nft_id * 32) as usize;
+    let start: usize = 2 + nft_id as usize * NFT_ITEM_SIZE;
     let mut nft_list_data = nft_list.data.borrow_mut();
 
     let nft_pk_inlist: Pubkey = Pubkey::try_from_slice(&nft_list_data[start..start+32])?;

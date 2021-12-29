@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use crate::state::*;
 
+#[derive(Accounts)]
 pub struct GetAward<'info> {
     #[account(mut, signer)]
     pub admin: AccountInfo<'info>,

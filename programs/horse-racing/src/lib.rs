@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use borsh::{BorshDeserialize, BorshSerialize};
 
 declare_id!("DBrWpEKgTccMoAQ6umLTSUWsfLR8wYNmvHJSUPGe4XJ8");
 

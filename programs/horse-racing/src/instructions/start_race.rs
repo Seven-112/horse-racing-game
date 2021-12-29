@@ -54,11 +54,11 @@ pub fn process(
         return Err(ProgramError::InvalidAccountData);
     }
 
-    let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
-    let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
+    //let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
+    //let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
 
-    //let sol_price: Option<u128> = Some(10);
-    //let btc_price: Option<u128> = Some(20);
+    let sol_price: Option<u128> = Some(10);
+    let btc_price: Option<u128> = Some(20);
 
     let mut random_value: u128 = 0;
     if let Some(sol_price) = sol_price {
@@ -75,6 +75,7 @@ pub fn process(
         msg!("No current BTC price");
     }
     random_value += ctx.accounts.clock.unix_timestamp as u128;
+    
     prize_winner((random_value % 20) as u8, ctx.accounts.nft_list.clone())?;
 
     Ok(())
@@ -88,38 +89,35 @@ pub fn prize_winner<'info> (
     let mut nft_list_data = nft_list.data.borrow_mut();
     let count: u16 = u16::try_from_slice(&nft_list_data[0..2])?;
 
-    let item_size: usize = 32 + 1 + 1 + 4;
-
-
-
-    let mut score_arr: [Score; 1000] = [Score { nft_id: 0, score: 0 }; 1000];
-
+    let mut score_arr: Vec<Score> = vec![];
     let cnt: usize = count as usize;
 
     for i in 0..cnt {
-        let start = 2 + item_size * i;
+        let start = 2 + NFT_ITEM_SIZE * i;
         let t_passion = nft_list_data[start + 32];
         let t_stamina = nft_list_data[start + 33];
-        score_arr[i].score = (t_passion + t_stamina + random_value) as u16;
-        score_arr[i].nft_id = i as u16;
+        score_arr.push(Score {
+            score: (t_passion + t_stamina + random_value) as u16,
+            nft_id: i as u16
+        });
     }
-
     for i in 0..cnt {
         for j in i+1..cnt {
             if score_arr[i].score < score_arr[j].score {
-                let t = score_arr[i];
+                let temp = score_arr[i];
                 score_arr[i] = score_arr[j];
-                score_arr[j] = t;
+                score_arr[j] = temp;
             }
         }
     }
 
-    let prize = [0.7, 0.2, 0.03, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01];
+    let prize: [u8; 10] = [70, 20, 3, 1, 1, 1, 1, 1, 1, 1];
+    msg!("prize = {:?}", prize);
 
-    for i in 0..min(cnt as u16, 10) {
-        let p: u32 = (prize[i] * 100.0) as u32;
+    for i in 0..min(count, 10) as usize {
+        let p: u32 = prize[i] as u32;
         let idx = score_arr[i].nft_id as usize;
-        let start = 2 + item_size*idx;
+        let start = 2 + NFT_ITEM_SIZE*idx;
         p.serialize(&mut &mut nft_list_data[start+34..start+38])?;
     }
 

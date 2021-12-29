@@ -55,11 +55,11 @@ pub fn process(
     upgradable_metadata.passion = 0;
     upgradable_metadata.stamina = 0;
 
-    let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
-    let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
+    //let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;
+    //let btc_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.btc_feed_account)?;
 
-    //let sol_price: Option<u128> = Some(10);
-    //let btc_price: Option<u128> = Some(20);
+    let sol_price: Option<u128> = Some(10);
+    let btc_price: Option<u128> = Some(20);
 
     msg!("after getprice");
     if let Some(sol_price) = sol_price {
@@ -97,8 +97,7 @@ pub fn add_nft<'info> (
     let mut count = get_nft_count(nft_list.clone())?;
     let mut nft_list_data = nft_list.data.borrow_mut();
 
-    let item_size: usize = 32 + 1 + 1 + 4;
-    let start: usize = (2 + item_size * 32) as usize;
+    let start: usize = (2 + NFT_ITEM_SIZE * count as usize) as usize;
     nft_mint.serialize(&mut &mut nft_list_data[start..start + 32])?;
     nft_list_data[start + 32] = ex_metadata.passion;
     nft_list_data[start + 33] = ex_metadata.stamina;

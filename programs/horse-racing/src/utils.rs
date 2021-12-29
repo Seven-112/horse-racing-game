@@ -23,9 +23,9 @@ pub fn sol_transfer<'a>(
     invoke(&ix, &[source, destination, system_program])
 }
 
-pub fn min(x: u16, y: u16) -> usize {
+pub fn min(x: u16, y: u16) -> u16 {
     if x < y {
-        return x as usize;
+        return x;
     }
-    y as usize
+    y
 }

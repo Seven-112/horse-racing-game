@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 
 pub const UPGRADABLE_METASIZE: usize = 1 + 1 + 1;
-pub const NFT_LIST_SIZE: usize = 2 + (32 + 2) * 1000; // 2 bytes for nft count
+pub const NFT_ITEM_SIZE: usize = 32 + 1 + 1 + 4; 
+pub const NFT_LIST_SIZE: usize = 2 + NFT_ITEM_SIZE * 1000; // 2 bytes for nft count
 pub const OPERATOR_LIST_SIZE: usize = 32 * 10 + 2;
 pub const MAX_ADMIN_CNT: usize = 10;
 pub const RACE_RESULT_SIZE: usize = 32 + 1;
@@ -31,7 +32,7 @@ pub struct RaceResult {
     pub bump: u8
 }
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Score {
     pub nft_id: u16,
     pub score: u16

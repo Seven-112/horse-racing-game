@@ -23,7 +23,9 @@ describe('horse-racing', () => {
   const user = anchor.web3.Keypair.generate();
   let tokenMint = null;
   let userTokenAccount = null;
-  const NFT_LIST_SIZE = 2 + 32 * 1000;
+  
+  const NFT_ITEM_SIZE = 32 + 1 + 1 + 4; 
+  const NFT_LIST_SIZE = 2 + NFT_ITEM_SIZE * 1000;
 
   const BTC_FEED_PK = new PublicKey("6dbkV6QCToTk6DRfuJyrGuz18kZ4rPUSHLLLVrryWdUC");
   const SOL_FEED_PK = new PublicKey("FmAmfoyPXiA8Vhhe6MZTr3U6rZfEZ1ctEHay1ysqCqcf");
@@ -161,11 +163,19 @@ describe('horse-racing', () => {
       [Buffer.from(anchor.utils.bytes.utf8.encode("operator_list"))],
       program.programId
     );
+    let nftListAccountPk = await PublicKey.createWithSeed(
+      admin.publicKey,
+      "nft_list",
+      program.programId,
+    );
+
     const tx = await program.rpc.upgradeNft(
+      0,
       {
         accounts: {
           admin: admin.publicKey,
           owner: user.publicKey,
+          nftList: nftListAccountPk,
           upgradableMetadata: upgradable_metadata_pda,
           mint: tokenMint.publicKey,
           tokenAccount: userTokenAccount,
