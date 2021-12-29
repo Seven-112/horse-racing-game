@@ -3,6 +3,7 @@ use anchor_spl::token::{self, TokenAccount};
 
 use crate::state::*;
 use crate::utils::*;
+use crate::errors::*;
 
 #[derive(Accounts)]
 pub struct UpgradeNFT<'info> {
@@ -114,7 +115,7 @@ pub fn update_nft_list<'info> (
 
     let nft_pk_inlist: Pubkey = Pubkey::try_from_slice(&nft_list_data[start..start+32])?;
     if nft_mint != nft_pk_inlist {
-        return Err(ProgramError::InvalidAccountData);
+        return Err(ErrorCode::NftMintMismatch.into());
     }
     nft_list_data[start + 32] = ex_metadata.passion;
     nft_list_data[start + 33] = ex_metadata.stamina;

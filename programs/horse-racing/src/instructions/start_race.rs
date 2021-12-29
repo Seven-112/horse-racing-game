@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::state::*;
 use crate::utils::*;
+use crate::errors::*;
 
 #[derive(Accounts)]
 pub struct StartRace<'info> {
@@ -51,7 +52,7 @@ pub fn process(
 
     if flag != 1 {
         msg!("You are not operator to start race");
-        return Err(ProgramError::InvalidAccountData);
+        return Err(ErrorCode::InvalidOperator.into());
     }
 
     let sol_price = chainlink::get_price(&chainlink::id(), &ctx.accounts.sol_feed_account)?;

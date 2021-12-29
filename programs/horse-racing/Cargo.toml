@@ -20,6 +20,7 @@ anchor-spl = {version = "0.17.0"}
 solana-program = "=1.7.11"
 borsh = "0.9.1"
 borsh-derive = "0.9.1"
+thiserror = "1.0.24"
 
 # features = ["no-entrypoint"]
 chainlink = { git = "https://github.com/smartcontractkit/chainlink-solana", package = "flux-aggregator", features = [
