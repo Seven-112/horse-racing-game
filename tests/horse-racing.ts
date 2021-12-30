@@ -33,11 +33,11 @@ describe('horse-racing', () => {
   it('Is initialized!', async () => {
     // Add your test here.
     await provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(admin.publicKey, 10000000000),
+      await provider.connection.requestAirdrop(admin.publicKey, 1000000000),
       "confirmed"
     );
     await provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(user.publicKey, 10000000000),
+      await provider.connection.requestAirdrop(user.publicKey, 1000000000),
       "confirmed"
     );
     let nftListAccountPk = await PublicKey.createWithSeed(
@@ -45,6 +45,7 @@ describe('horse-racing', () => {
       "nft_list",
       program.programId,
     );
+    
     let ix = SystemProgram.createAccountWithSeed({
       fromPubkey: admin.publicKey,
       basePubkey: admin.publicKey,
@@ -148,6 +149,9 @@ describe('horse-racing', () => {
 
     let new_metadata = await program.account.upgradableMetadata.fetch(upgradable_metadata_pda);
     console.log("new_metadata =", new_metadata);
+
+    let raw_metadata = await provider.connection.getAccountInfo(upgradable_metadata_pda);
+    console.log("raw_metadata =", raw_metadata);
 
     let nft_list = await provider.connection.getAccountInfo(nftListAccountPk);
     console.log("nft_list.data =", nft_list.data);

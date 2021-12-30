@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-pub const UPGRADABLE_METASIZE: usize = 1 + 1 + 1;
+pub const UPGRADABLE_METASIZE: usize = 1 + 1 + 1 + 2;
 pub const NFT_ITEM_SIZE: usize = 32 + 1 + 1 + 4; 
 pub const NFT_LIST_SIZE: usize = 2 + NFT_ITEM_SIZE * 1000; // 2 bytes for nft count
 pub const OPERATOR_LIST_SIZE: usize = 32 * 10 + 2;
@@ -17,6 +17,7 @@ pub struct UpgradableMetadata {
     pub bump: u8,
     pub passion: u8,
     pub stamina: u8,
+    pub nft_id: u16
 }
 
 #[account]

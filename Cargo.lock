@@ -534,7 +534,7 @@ dependencies = [
 [[package]]
 name = "flux-aggregator"
 version = "0.1.0"
-source = "git+https://github.com/smartcontractkit/chainlink-solana#8dab5d2d04f77feabb7eec6f9ee455224802fbc7"
+source = "git+https://github.com/smartcontractkit/chainlink-solana#3e92d19e0653a525d52e3de89ac21cdf423c1f7e"
 dependencies = [
  "borsh",
  "borsh-derive 0.8.2",
@@ -641,7 +641,7 @@ dependencies = [
  "borsh-derive 0.9.1",
  "flux-aggregator",
  "solana-program",
- "spl-token",
+ "thiserror",
 ]
 
 [[package]]

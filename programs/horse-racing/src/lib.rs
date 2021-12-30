@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("DBrWpEKgTccMoAQ6umLTSUWsfLR8wYNmvHJSUPGe4XJ8");
+declare_id!("A6cVVNvApCWnxWBzfUt8PngxKVc9z7WcSwHg3tZtGbv");
 
 pub mod errors;
 pub mod utils;
@@ -25,6 +25,18 @@ pub mod horse_racing {
         ctx: Context<AddOperator>
     ) -> ProgramResult {
         instructions::add_operator::process(ctx)
+    }
+
+    pub fn del_operator(
+        ctx: Context<DelOperator>
+    ) -> ProgramResult {
+        instructions::del_operator::process(ctx)
+    }
+
+    pub fn transfer_role(
+        ctx: Context<TransferRole>
+    ) -> ProgramResult {
+        instructions::transfer_role::process(ctx)
     }
 
     pub fn mint_nft(
